@@ -1,0 +1,80 @@
+USE Bookstore1;
+
+CREATE TABLE Cities
+(id int IDENTITY,
+city_name varchar(100) NOT NULL,
+PRIMARY KEY(id)
+);
+
+CREATE TABLE Genres (
+id int IDENTITY,
+genre_name varchar(100) NOT NULL
+PRIMARY KEY(id));
+
+CREATE TABLE Statuses (
+id int IDENTITY,
+status_name varchar(100) NOT NULL
+PRIMARY KEY(id));
+
+CREATE TABLE Authors (
+id int IDENTITY PRIMARY KEY,
+first_name varchar(100),
+last_name varchar(100),
+patronymic varchar(100),
+pseudonym varchar(100),
+date_of_birth date,
+city_id int,
+FOREIGN KEY (city_id) REFERENCES Cities (id));
+
+CREATE TABLE Publishing_houses (
+id int PRIMARY KEY IDENTITY,
+city_id int,
+FOREIGN KEY (city_id) REFERENCES Cities (id));
+
+CREATE TABLE Customers (
+id int IDENTITY PRIMARY KEY,
+first_name varchar(100),
+last_name varchar(100),
+patronymic varchar(100),
+pseudonym varchar(100),
+date_of_birth date,
+subscription bit DEFAULT 0);
+
+CREATE TABLE order_pick_up_points (
+id int IDENTITY PRIMARY KEY,
+phone_number varchar(40),
+city_id int,
+FOREIGN KEY (city_id) REFERENCES Cities (id));
+
+CREATE TABLE Books (
+id int IDENTITY PRIMARY KEY,
+title varchar(500),
+author_id int,
+publishing_house_id int,
+publication_date DATE,
+FOREIGN KEY (author_id) REFERENCES Authors (id),
+FOREIGN KEY (publishing_house_id) REFERENCES Publishing_houses (id));
+
+CREATE TABLE Genres_of_books (
+book_id int,
+genre_id int,
+FOREIGN KEY (book_id) REFERENCES Books (id),
+FOREIGN KEY (genre_id) REFERENCES Genres (id),
+PRIMARY KEY (book_id, genre_id));
+
+CREATE TABLE Orders (
+id int PRIMARY KEY IDENTITY,
+date_of_the_order date,
+order_pick_up_point_id int,
+customer_id int,
+status_id int,
+FOREIGN KEY (order_pick_up_point_id) REFERENCES order_pick_up_points (id),
+FOREIGN KEY (customer_id) REFERENCES Customers (id),
+FOREIGN KEY (status_id) REFERENCES Statuses (id));
+
+CREATE TABLE Order_composition (
+id int PRIMARY KEY IDENTITY, 
+order_id int,
+book_id int,
+FOREIGN KEY (order_id) REFERENCES Orders (id),
+FOREIGN KEY (book_id) REFERENCES Books (id));
